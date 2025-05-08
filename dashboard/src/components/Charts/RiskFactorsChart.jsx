@@ -34,7 +34,7 @@ export default function RiskFactorsChart({ data }) {
     
     const ctx = chartRef.current.getContext('2d');
     chartInstance.current = new Chart(ctx, {
-      type: 'horizontalBar',
+      type: 'bar', // Changed from 'horizontalBar' to 'bar'
       data: {
         labels: factorsArray.map(item => item.factor),
         datasets: [{
@@ -60,7 +60,7 @@ export default function RiskFactorsChart({ data }) {
         }]
       },
       options: {
-        indexAxis: 'y',
+        indexAxis: 'y', // This makes the bars horizontal
         responsive: true,
         maintainAspectRatio: false,
         plugins: {

@@ -28,9 +28,9 @@ export default function Dashboard() {
   
   // Models available in the dashboard
   const models = [
-    { id: 'championship', name: 'Championship Model (SMOTE & Optuna)', filename: '094400-public.py' },
-    { id: 'ceiling-breaker', name: 'Ceiling-Breaking Model', filename: '094508-public.py' },
-    { id: 'ultra-optimized', name: 'Ultra-Optimized Champion Model', filename: '094640-public.py' }
+    { id: 'championship', name: 'Championship Model (SMOTE & Optuna)', filename: '/models/094400-public.py' },
+    { id: 'ceiling-breaker', name: 'Ceiling-Breaking Model', filename: '/models/094508-public.py' },
+    { id: 'ultra-optimized', name: 'Ultra-Optimized Champion Model', filename: '/models/094640-public.py' }
   ];
   
   // Check if the viewport is mobile
