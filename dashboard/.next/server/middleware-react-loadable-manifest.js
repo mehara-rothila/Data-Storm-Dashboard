@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST="{\"app\\\\page.js -> ../components/Dashboard/Dashboard\":{\"id\":\"app\\\\page.js -> ../components/Dashboard/Dashboard\",\"files\":[\"static/chunks/_app-pages-browser_src_components_Dashboard_Dashboard_jsx.js\"]}}"
