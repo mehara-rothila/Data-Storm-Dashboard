@@ -11,6 +11,9 @@ import TimeSeriesChart from '../Charts/TimeSeriesChart';
 import ConversionRatesChart from '../Charts/ConversionRatesChart';
 import PredictionDistributionChart from '../Charts/PredictionDistributionChart';
 import AgentPerformanceByExperience from '../Charts/AgentPerformanceByExperience';
+import SingleEntryPredictor from './SingleEntryPredictor';
+import AdvancedAnalytics from './AdvancedAnalytics';
+import RiskFactorsChart from '../Charts/RiskFactorsChart';
 
 export default function Dashboard() {
   const [selectedModel, setSelectedModel] = useState('championship');
@@ -21,6 +24,7 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [isMobile, setIsMobile] = useState(false);
+  const [isProcessingSingleEntry, setIsProcessingSingleEntry] = useState(false);
   
   // Models available in the dashboard
   const models = [
@@ -107,13 +111,31 @@ export default function Dashboard() {
     }
   };
   
+  // Handle single entry prediction
+  const handleSingleEntryPredict = async (entryData) => {
+    setIsProcessingSingleEntry(true);
+    
+    // For demo purposes, we'll use the generateAgentPredictions function directly
+    try {
+      // Create a single-item array with the entry
+      const singlePrediction = await processData.generateAgentPredictions([entryData], selectedModel);
+      setIsProcessingSingleEntry(false);
+      return singlePrediction[0]; // Return the prediction
+    } catch (error) {
+      console.error('Error processing single entry:', error);
+      setIsProcessingSingleEntry(false);
+      throw error;
+    }
+  };
+  
   const tabs = [
     { id: 'overview', label: 'Overview' },
     { id: 'features', label: 'Feature Importance' },
     { id: 'time-series', label: 'Time Series' },
     { id: 'agents', label: 'Agent Predictions' },
     { id: 'experience', label: 'Experience Analysis' },
-    { id: 'conversion', label: 'Conversion Rates' }
+    { id: 'conversion', label: 'Conversion Rates' },
+    { id: 'demo', label: 'Demo Predictor' }
   ];
   
   return (
@@ -196,12 +218,15 @@ export default function Dashboard() {
                     {activeTab === 'overview' && (
                       <div className="space-y-6">
                         <PerformanceMetrics metrics={processedResults.metrics} />
+                        
+                        <AdvancedAnalytics data={processedResults} />
+                        
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="bg-white p-4 rounded-lg shadow-sm">
                             <PredictionDistributionChart data={processedResults.predictionDistribution} />
                           </div>
                           <div className="bg-white p-4 rounded-lg shadow-sm">
-                            <AgentPerformanceByExperience data={processedResults.agentPerformance} />
+                            <RiskFactorsChart data={processedResults} />
                           </div>
                         </div>
                       </div>
@@ -233,6 +258,14 @@ export default function Dashboard() {
                       <div className="bg-white p-4 rounded-lg shadow-sm">
                         <ConversionRatesChart data={processedResults.conversionRates} />
                       </div>
+                    )}
+                    
+                    {activeTab === 'demo' && (
+                      <SingleEntryPredictor 
+                        onPredict={handleSingleEntryPredict}
+                        selectedModel={selectedModel}
+                        isProcessing={isProcessingSingleEntry}
+                      />
                     )}
                   </>
                 )}
