@@ -82,7 +82,7 @@ export default function CSVUploader({ onUpload, isLoading }) {
       <div
         className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors duration-200 ${
           isDragging
-            ? 'border-indigo-400 bg-indigo-50'
+            ? 'border-green-400 bg-green-50'
             : 'border-gray-300 hover:border-gray-400'
         } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         onDragOver={!isLoading ? handleDragOver : undefined}

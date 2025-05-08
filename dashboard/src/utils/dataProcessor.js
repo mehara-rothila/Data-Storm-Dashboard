@@ -1,5 +1,8 @@
 import Papa from 'papaparse';
 
+// Export generateAgentPredictions for use in SingleEntryPredictor
+export { generateAgentPredictions };
+
 export const loadCsvFile = async (filePath) => {
   try {
     const response = await fetch(filePath);

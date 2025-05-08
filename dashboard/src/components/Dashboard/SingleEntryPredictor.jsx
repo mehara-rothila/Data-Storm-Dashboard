@@ -22,6 +22,7 @@ export default function SingleEntryPredictor({ onPredict, selectedModel, isProce
   });
 
   const [prediction, setPrediction] = useState(null);
+  const [predictionError, setPredictionError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,22 +32,28 @@ export default function SingleEntryPredictor({ onPredict, selectedModel, isProce
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Generate a mock agent entry from form data
-    const agentEntry = {
-      agent_code: 'DEMO-' + Math.floor(Math.random() * 10000),
-      agent_age: formData.agent_age,
-      agent_join_month: new Date(Date.now() - formData.months_with_company * 30 * 24 * 60 * 60 * 1000).toISOString(),
-      first_policy_sold_month: new Date(Date.now() - (formData.months_with_company - 1) * 30 * 24 * 60 * 60 * 1000).toISOString(),
-      year_month: new Date().toISOString(),
-      ...formData
-    };
+    setPredictionError(null);
+    
+    try {
+      // Generate a mock agent entry from form data
+      const agentEntry = {
+        agent_code: 'DEMO-' + Math.floor(Math.random() * 10000),
+        agent_age: formData.agent_age,
+        agent_join_month: new Date(Date.now() - formData.months_with_company * 30 * 24 * 60 * 60 * 1000).toISOString(),
+        first_policy_sold_month: new Date(Date.now() - (formData.months_with_company - 1) * 30 * 24 * 60 * 60 * 1000).toISOString(),
+        year_month: new Date().toISOString(),
+        ...formData
+      };
 
-    // Process prediction
-    onPredict(agentEntry).then(result => {
+      // Process prediction
+      const result = await onPredict(agentEntry);
       setPrediction(result);
-    });
+    } catch (error) {
+      console.error('Error processing prediction:', error);
+      setPredictionError('An error occurred while generating the prediction. Please try again.');
+    }
   };
 
   return (
@@ -55,6 +62,12 @@ export default function SingleEntryPredictor({ onPredict, selectedModel, isProce
       <p className="text-sm text-gray-600 mb-4">
         Enter agent metrics to predict NILL risk using the {selectedModel} model.
       </p>
+
+      {predictionError && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+          {predictionError}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -65,7 +78,8 @@ export default function SingleEntryPredictor({ onPredict, selectedModel, isProce
               name="agent_age"
               value={formData.agent_age}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              disabled={isProcessing}
             />
           </div>
           
@@ -76,7 +90,8 @@ export default function SingleEntryPredictor({ onPredict, selectedModel, isProce
               name="months_with_company"
               value={formData.months_with_company}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              disabled={isProcessing}
             />
           </div>
           
@@ -87,7 +102,8 @@ export default function SingleEntryPredictor({ onPredict, selectedModel, isProce
               name="unique_proposal"
               value={formData.unique_proposal}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              disabled={isProcessing}
             />
           </div>
           
@@ -98,7 +114,8 @@ export default function SingleEntryPredictor({ onPredict, selectedModel, isProce
               name="unique_quotations"
               value={formData.unique_quotations}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              disabled={isProcessing}
             />
           </div>
           
@@ -109,7 +126,8 @@ export default function SingleEntryPredictor({ onPredict, selectedModel, isProce
               name="unique_proposals_last_7_days"
               value={formData.unique_proposals_last_7_days}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              disabled={isProcessing}
             />
           </div>
           
@@ -120,7 +138,8 @@ export default function SingleEntryPredictor({ onPredict, selectedModel, isProce
               name="unique_quotations_last_7_days"
               value={formData.unique_quotations_last_7_days}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              disabled={isProcessing}
             />
           </div>
         </div>
@@ -129,11 +148,21 @@ export default function SingleEntryPredictor({ onPredict, selectedModel, isProce
           <button
             type="submit"
             disabled={isProcessing}
-            className={`px-4 py-2 rounded-md text-white ${
-              isProcessing ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'
+            className={`px-4 py-2 rounded-md text-white transition-colors duration-200 ${
+              isProcessing 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-green-700 hover:bg-green-800 active:bg-green-900 shadow-sm'
             }`}
           >
-            {isProcessing ? 'Processing...' : 'Predict NILL Risk'}
+            {isProcessing ? (
+              <span className="flex items-center">
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Processing...
+              </span>
+            ) : 'Predict NILL Risk'}
           </button>
         </div>
       </form>
@@ -166,7 +195,7 @@ export default function SingleEntryPredictor({ onPredict, selectedModel, isProce
           
           <div>
             <h4 className="text-sm font-semibold text-gray-700 mb-1">Recommendation:</h4>
-            <p className="text-sm text-gray-600 bg-blue-50 p-2 rounded">
+            <p className="text-sm text-gray-600 bg-green-50 p-3 rounded border border-green-100">
               {prediction.recommendation}
             </p>
           </div>

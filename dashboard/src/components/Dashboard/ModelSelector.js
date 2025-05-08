@@ -1,6 +1,6 @@
 'use client';
 
-export default function ModelSelector({ models, selectedModel, onSelectModel }) {
+export default function ModelSelector({ models, selectedModel, onSelectModel, isDisabled }) {
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold text-gray-800 mb-3">Select Model</h2>
@@ -10,19 +10,28 @@ export default function ModelSelector({ models, selectedModel, onSelectModel }) 
           <div
             key={model.id}
             className={`p-3 rounded-md cursor-pointer transition-all duration-200 border ${
+              isDisabled ? 'opacity-70 cursor-not-allowed' : ''
+            } ${
               selectedModel === model.id
-                ? 'bg-indigo-50 border-indigo-500 shadow-sm'
+                ? 'bg-green-50 border-green-500 shadow-sm'
                 : 'border-gray-200 hover:bg-gray-50'
             }`}
-            onClick={() => onSelectModel(model.id)}
+            onClick={(e) => {
+              e.preventDefault();
+              if (!isDisabled) {
+                onSelectModel(model.id);
+              }
+            }}
           >
-            <h3 className="font-medium text-gray-800">{model.name}</h3>
+            <h3 className={`font-medium ${selectedModel === model.id ? 'text-green-800' : 'text-gray-800'}`}>
+              {model.name}
+            </h3>
             <p className="text-xs text-gray-500 mt-1">{model.filename}</p>
           </div>
         ))}
       </div>
       
-      <div className="mt-4 p-3 bg-blue-50 rounded-md text-sm text-blue-700 border border-blue-100">
+      <div className="mt-4 p-3 bg-green-50 rounded-md text-sm text-green-700 border border-green-100">
         {selectedModel === 'championship' && (
           <p>This model uses SMOTE to handle class imbalance and Optuna for hyperparameter optimization.</p>
         )}

@@ -115,12 +115,11 @@ export default function Dashboard() {
   const handleSingleEntryPredict = async (entryData) => {
     setIsProcessingSingleEntry(true);
     
-    // For demo purposes, we'll use the generateAgentPredictions function directly
     try {
       // Create a single-item array with the entry
-      const singlePrediction = await processData.generateAgentPredictions([entryData], selectedModel);
+      const singlePrediction = await processData(trainData, [entryData], selectedModel);
       setIsProcessingSingleEntry(false);
-      return singlePrediction[0]; // Return the prediction
+      return singlePrediction.agentPredictions[0]; // Return the prediction
     } catch (error) {
       console.error('Error processing single entry:', error);
       setIsProcessingSingleEntry(false);
@@ -140,13 +139,13 @@ export default function Dashboard() {
   
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation Bar */}
-      <nav className="bg-indigo-700 text-white shadow-md">
+      {/* Top Navigation Bar - Updated to dark green */}
+      <nav className="bg-green-800 text-white shadow-md">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <h1 className="text-xl font-bold">Insurance Agent NILL Prediction</h1>
           <div className="flex items-center space-x-4">
             {!isMobile && (
-              <div className="text-sm px-2 py-1 bg-indigo-900 rounded">
+              <div className="text-sm px-3 py-1.5 bg-green-900 rounded-md border border-green-700 shadow-sm">
                 Model: {models.find(m => m.id === selectedModel)?.name.split('(')[0]}
               </div>
             )}
@@ -163,6 +162,7 @@ export default function Dashboard() {
                 models={models} 
                 selectedModel={selectedModel} 
                 onSelectModel={handleModelChange}
+                isDisabled={isLoading}
               />
             </div>
             
@@ -182,19 +182,25 @@ export default function Dashboard() {
               </div>
             )}
             
-            {/* Tabs */}
+            {/* Tabs - Updated with green styling */}
             <div className="bg-white shadow-md rounded-lg overflow-hidden mb-6">
-              <div className="border-b border-gray-200 overflow-x-auto">
+              <div className="border-b border-gray-200 overflow-x-auto bg-gray-50">
                 <nav className="flex">
                   {tabs.map(tab => (
                     <button
                       key={tab.id}
-                      className={`py-3 px-4 text-sm font-medium ${
+                      className={`py-3 px-5 text-sm font-medium transition-colors duration-200 ${
                         activeTab === tab.id
-                          ? 'border-b-2 border-indigo-500 text-indigo-600'
-                          : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          ? 'border-b-2 border-green-700 text-green-800 bg-white'
+                          : 'text-gray-600 hover:text-green-800 hover:bg-gray-100'
                       }`}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (!isLoading) {
+                          setActiveTab(tab.id);
+                        }
+                      }}
+                      disabled={isLoading}
                     >
                       {tab.label}
                     </button>
@@ -206,7 +212,7 @@ export default function Dashboard() {
               <div className="p-4">
                 {isLoading ? (
                   <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
                     <p className="ml-4 text-gray-600">Processing data...</p>
                   </div>
                 ) : !processedResults ? (

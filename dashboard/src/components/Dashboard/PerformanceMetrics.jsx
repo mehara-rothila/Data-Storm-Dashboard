@@ -11,7 +11,7 @@ export default function PerformanceMetrics({ metrics }) {
         isPercentage={true}
         description="Overall prediction accuracy"
         trend={metrics.accuracyTrend}
-        color="indigo"
+        color="green"
       />
       
       <MetricCard 
@@ -20,7 +20,7 @@ export default function PerformanceMetrics({ metrics }) {
         isPercentage={true}
         description="Precision for non-NILL predictions"
         trend={metrics.precisionTrend}
-        color="blue"
+        color="green"
       />
       
       <MetricCard 
@@ -29,7 +29,7 @@ export default function PerformanceMetrics({ metrics }) {
         isPercentage={true}
         description="Recall for non-NILL predictions"
         trend={metrics.recallTrend}
-        color="teal"
+        color="green"
       />
       
       <MetricCard 
@@ -37,22 +37,23 @@ export default function PerformanceMetrics({ metrics }) {
         value={metrics.f1Score} 
         isPercentage={true}
         description="Harmonic mean of precision and recall"
-        color="cyan"
+        color="green"
       />
     </div>
   );
 }
 
-function MetricCard({ title, value, isPercentage = false, description, trend, color = 'indigo' }) {
+function MetricCard({ title, value, isPercentage = false, description, trend, color = 'green' }) {
   const colorClasses = {
     indigo: { bg: 'bg-indigo-50', text: 'text-indigo-800', border: 'border-indigo-200' },
     blue: { bg: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-200' },
+    green: { bg: 'bg-green-50', text: 'text-green-800', border: 'border-green-200' },
     teal: { bg: 'bg-teal-50', text: 'text-teal-800', border: 'border-teal-200' },
     cyan: { bg: 'bg-cyan-50', text: 'text-cyan-800', border: 'border-cyan-200' },
     gray: { bg: 'bg-gray-50', text: 'text-gray-800', border: 'border-gray-200' }
   };
   
-  const selectedColor = colorClasses[color] || colorClasses.indigo;
+  const selectedColor = colorClasses[color] || colorClasses.green;
   
   return (
     <div className={`p-4 rounded-lg shadow-sm ${selectedColor.bg} border ${selectedColor.border}`}>
